@@ -1,6 +1,99 @@
 /******* Change Box Model ***************/
-*,
-*:before,
-*:after {
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border: 10px solid black;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;}
+
+nav a {
+  text-decoration: none;
+  color: black;
+  margin: 0 15px;
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+nav a:hover {
+  color: blue;
+}
+
+.main-content {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.main-content img {
+  margin: 20px 0;
+  border: 5px solid black;
+}
+
+.main-content .button {
+  display: inline-block;
+  background-color: blue;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.grid div {
+  width: 48%;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.upgrades li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.upgrades img {
+  margin-right: 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px 0;
+  background-color: black;
+  color: white;
 }
