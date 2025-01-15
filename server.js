@@ -44,5 +44,5 @@ const host = process.env.HOST || "localhost";
  * Log statement to confirm server operation
  *********/
 app.listen(port, () => {
-  console.log("App listening on http://${host}:${port}");
+  console.log("App listening on http://localhost:5500/");
 });

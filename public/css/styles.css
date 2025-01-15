@@ -6,20 +6,9 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: white;
-  color: #333;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: black;
-  border: 10px solid white;
-  border-radius: 5px;
-  color : white;
-
+  font-family: "Roboto Slab",Arial, sans-serif;
+  background-color: rgb(255, 255, 255);
+  color: #513d05;
 }
 
 nav {
@@ -53,7 +42,11 @@ nav ul li a:hover {
   background-color: white;
   color: black;
 }
+.grid li{
+  color:white;
+  list-style: none;
 
+}
 
 header {
   display: flex;
@@ -115,7 +108,6 @@ header {
 
 .main-content .button {
   display: inline-block;
-  background-color: blue;
   color: white;
   padding: 10px 20px;
   text-decoration: none;
@@ -158,91 +150,135 @@ footer {
   color: white;
 }
 
+  .image-container {
+    display: block;
+    text-align: center; 
+  }
 
-.delorean-section {
-  position: absolute; 
-  top: 20%; 
-  left: 0%; 
-  transform: translate(-50%, -20%); 
-  background-color: rgba(0, 128, 128, 0.9); 
-  color: white;
-  padding: 20px;
-  border-radius: 10px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-  max-width: 300px; 
-  text-align: center;
-  line-height: 1.8;
-}
+  .image-container img {
+    max-width: 80%; 
+    height: auto;
+  }
 
-.delorean-section .button {
-  display: inline-block;
-  background-color: white;
-  color: #008080;
-  padding: 10px 20px;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+  .delorean-section {
+    position: static; 
+    transform: none;
+    max-width: 100%;
+    margin: 20px auto;
+    text-align: center; 
+  }
 
-.delorean-section .button:hover {
-  background-color: #004d4d;
-  color: white;
-}
+  .delorean-container {
+    display: block; 
+    margin-top: 20px;
+  }
 
-.image-container {
-  position: relative; 
-  display: inline-block;
-  max-width: 600px; 
-}
+  .delorean-upgrades,
+  .delorean-reviews {
+    max-width: 100%; 
+    margin: 20px auto; 
+    padding: 15px;
+  }
 
-.image-container img {
-  display: block; 
-  width: 100%; 
-  height: auto;
-}
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 15px;
+  }
 
-.delorean-container {
-  display: flex; 
-  gap: 20px; 
-  margin-top: 20px; 
-  justify-content: space-around; 
-  align-items: flex-start; 
-}
+  .grid div {
+    max-width: 100%; 
+    text-align: center;
+  }
 
-.delorean-upgrades,
-.delorean-reviews {
-  background-color: rgba(0, 128, 128, 0.9); 
-  color: white;
-  padding: 20px;
-  border-radius: 10px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-  max-width: 45%; 
-}
 
-.delorean-reviews ul {
-  list-style: none;
-  padding: 0;
-}
 
-.delorean-reviews li {
-  margin-bottom: 10px; 
-  line-height: 1.8; 
-}
-
-.delorean-upgrades .grid {
-  display: flex;
-  flex-wrap: wrap; 
-  gap: 20px; 
-  justify-content: center;
-}
-
-.delorean-upgrades .grid div {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 2px solid white;
-  border-radius: 5px;
-  padding: 10px;
-  text-align: center;
-  max-width: 150px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+@media screen and (min-width: 768px){
+  .delorean-section {
+    position: absolute; 
+    top: 20%; 
+    left: 0%; 
+    transform: translate(-50%, -20%); 
+    background-color: #4c706d; 
+    color: white;
+    padding: 20px;
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    max-width: 300px; 
+    text-align: center;
+    line-height: 1.8;
+  }
+  
+  .delorean-section .button {
+    display: inline-block;
+    background-color: white;
+    color: #4c706d;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .delorean-section .button:hover {
+    background-color: #004d4d;
+    color: white;
+  }
+  
+  .image-container {
+    position: relative; 
+    display: inline-block;
+    max-width: 600px; 
+  }
+  
+  .image-container img {
+    display: block; 
+    width: 100%; 
+    height: auto;
+  }
+  
+  .delorean-container {
+    display: flex; 
+    gap: 20px; 
+    margin-top: 20px; 
+    justify-content: space-around; 
+    align-items: flex-start; 
+  }
+  
+  .delorean-upgrades,
+  .delorean-reviews {
+    background-color: #4c706d; 
+    color: white;
+    padding: 20px;
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    max-width: 45%; 
+  }
+  
+  .delorean-reviews ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .delorean-reviews li {
+    margin-bottom: 10px; 
+    line-height: 1.8; 
+  }
+  
+  .delorean-upgrades .grid {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: center;
+  }
+  
+  .delorean-upgrades .grid div {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    max-width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+  }
 }
