@@ -8,44 +8,22 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const env = require("dotenv").config();
+const path = require('path');
 const app = express();
 const staticRoutes = require("./routes/static");
 const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities/index");
-const session = require("express-session");
-const pool = require('./database/');
-const accountRoute = require('./routes/accountRoute/');
 
 /* *********
  * Middleware for Static Files
  *********/
 app.use(express.static("public")); // Serve static files from the 'public' directory
 
-/* ***********************
- * Middleware
- * ************************/
-app.use(session({
-  store: new (require('connect-pg-simple')(session))({
-    createTableIfMissing: true,
-    pool,
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  name: 'sessionId',
-}))
-
-// Express Messages Middleware
-app.use(require('connect-flash')())
-app.use(function(req, res, next){
-  res.locals.messages = require('express-messages')(req, res)
-  next()
-})
-
 /* *********
  * View Engine and Templates
  *********/
+app.set('views', path.join(__dirname, 'views'));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "./layouts/layout"); // Not at views root
@@ -55,14 +33,14 @@ app.set("layout", "./layouts/layout"); // Not at views root
  *********/
 app.use(staticRoutes);
 
-
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
 
 
 // Inventory routes
 app.use("/inv", inventoryRoute);
-app.use("/account", accountRoute);
+
+app.use("/error", inventoryRoute);
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
@@ -74,15 +52,24 @@ app.use(async (req, res, next) => {
 * Place after all other middleware
 *************************/
 app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav()
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  if(err.status == 404){ message = err.message} else {message = 'Oh no! There was a crash. Maybe try a different route?'}
-  res.render("errors/error", {
-    title: err.status || 'Server Error',
+  let nav = await utilities.getNav();
+  let message;
+
+  const status = err.status || 500; // Garante um status válido
+
+  if (status === 404) {
+    message = err.message || "Página não encontrada.";
+  } else {
+    message = "Oh no! There was a crash. Maybe try a different route?";
+  }
+
+  res.status(status).render("errors/error", {
+    title: `Error ${status}`,
     message,
+    status,
     nav
-  })
-})
+  });
+});
 
 /* *********
  * Local Server Information
