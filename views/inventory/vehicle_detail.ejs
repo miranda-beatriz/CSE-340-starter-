@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= vehicle.inv_make %> <%= vehicle.inv_model %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .full-size-image {
+            max-width: 40%;
+            height: auto;
+        }
+        .vehicle-details {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="<%= vehicle.inv_image %>" alt="Image of <%= vehicle.inv_make %> <%= vehicle.inv_model %>" class="full-size-image">
+        
+        <div class="vehicle-details">
+            <h1><%= vehicle.inv_make %> <%= vehicle.inv_model %></h1>
+            <p><strong>Year:</strong> <%= vehicle.inv_year %></p>
+            <p><strong>Price:</strong> $<%= new Intl.NumberFormat('en-US').format(vehicle.inv_price) %></p>
+            <p><strong>Mileage:</strong> <%= new Intl.NumberFormat('en-US').format(vehicle.inv_miles) %> miles</p>
+            <p><strong>Description:</strong> <%= vehicle.inv_description %></p>
+        </div>
+    </div>
+</body>
+</html>
