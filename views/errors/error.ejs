@@ -5,30 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <style>
-        /* Container que contém a imagem de fundo */
         .error-page {
             position: relative;
             width: 50%;
-            height: 50vh; /* Garante que ocupe toda a tela */
+            height: 50vh; 
             background: url('/images/vehicles/crashedcar.jpg') no-repeat center center;
             background-size: cover;
             display: flex;
-            justify-content: flex-start; /* Alinha à esquerda */
-            align-items: flex-start; /* Posiciona o conteúdo no topo */
+            justify-content: flex-start; 
+            align-items: flex-start; 
             padding: 20px;
             box-sizing: border-box;
         }
 
-        /* Caixa semi-transparente para a mensagem */
         .error-container {
             background: rgba(0, 0, 0, 0.274);
             padding: 30px;
             border-radius: 10px;
-            text-align: left; /* Alinha o texto à esquerda */
+            text-align: left; 
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
             max-width: 100%;
-            margin-top: -17px; /* Adiciona um espaço do topo */
+            margin-top: -17px;
             height: 485px;
             width: 2300px;
         }
@@ -42,7 +40,6 @@
             font-size: 1.2em;
         }
 
-        /* Estilos específicos para celulares */
         @media (max-width: 768px) {
             .error-container {
                 max-width: 95%;

@@ -56,10 +56,10 @@ app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav();
   let message;
 
-  const status = err.status || 500; // Garante um status válido
+  const status = err.status || 500; 
 
   if (status === 404) {
-    message = err.message || "Página não encontrada.";
+    message = err.message || "Page not found.";
   } else {
     message = "Oh no! There was a crash. Maybe try a different route?";
   }
