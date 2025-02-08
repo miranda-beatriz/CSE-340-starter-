@@ -18,6 +18,7 @@ const utilities = require("./utilities/index");
 const session = require("express-session");
 const pool = require('./database/');
 const accountRoute = require('./routes/accountRoute');
+const bodyParser = require("body-parser");
 
 
 /* *********
@@ -66,12 +67,16 @@ app.get("/", utilities.handleErrors(baseController.buildHome));
 // Inventory routes
 app.use("/inv", inventoryRoute);
 app.use("/error", inventoryRoute);
-app.use("/account", accountRoute);
+
+// Account routes
+app.use("/account", require("./routes/accountRoute"));
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we appear to have lost that page.'})
 })
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 /* ***********************
 * Express Error Handler
