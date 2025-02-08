@@ -6,7 +6,7 @@
             <%= flashMessage %>
         </div>
     <% } %>
-    
+
     <% if (errors) { %>
         <ul class="notice">
        <% errors.array().forEach(error => { %>
@@ -17,13 +17,15 @@
 
     <form action="/account/register" method="post">
         <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required>
+        <input type="text" name="account_firstname" id="accountFirstname" required value="<%= locals.account_firstname %>">
 
         <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" required>
+        <input type="text" name="account_lastname" id="accountLastname" required value="<%= locals.account_lastname %>">
+
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" name="account_email" id="accountemail" required value="<%= locals.account_email %>">
+
     
         <label for="password">Password:</label>
         <input type="password" name="account_password" id="accountPassword" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
