@@ -15,7 +15,7 @@
        </ul>
       <% } %>
 
-    <form action="/account/register" method="post">
+    <form action="/account/register" method="POST">
         <label for="firstName">First Name:</label>
         <input type="text" name="account_firstname" id="accountFirstname" required value="<%= locals.account_firstname %>">
 
@@ -24,7 +24,7 @@
 
 
         <label for="email">Email:</label>
-        <input type="email" name="account_email" id="accountemail" required value="<%= locals.account_email %>">
+        <input type="email" name="account_email" id="accountEmail" required value="<%= locals.account_email %>">
 
     
         <label for="password">Password:</label>

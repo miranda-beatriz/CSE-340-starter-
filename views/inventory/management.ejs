@@ -1,0 +1,25 @@
+<%# Management View %>
+
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else { %>
+    <% res.redirect('/') %>
+<% } %>
+
+<%# Flash Messages %>
+<% if (messages && messages.length > 0) { %>
+    <div class="flash-messages">
+        <% messages.forEach(function(message) { %>
+            <p class="flash-message"><%= message %></p>
+        <% }); %>
+    </div>
+<% } %>
+
+<%# Links to Management Options %>
+<div class="management-links">
+    <a href="/inv/add-classification">Add New Classification</a>
+    <a href="/inv/add-inventory">Add New Inventory Item</a>
+</div>
+
+<%# Inventory Items Display %>
+<%- grid %>

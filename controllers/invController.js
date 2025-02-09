@@ -20,7 +20,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
       grid,
     });
   } catch (error) {
-    next({ status: 500, message: "Erro ao buscar inventário por classificação." });
+    next({ status: 500, message: "Error to try find vehicle." });
   }
 };
 
@@ -33,18 +33,38 @@ invCont.getVehicleById = async function (req, res, next) {
     const data = await invModel.getVehicleById(inv_id);
     
     if (data) {
-      let nav = await utilities.getNav(); // Caso esteja usando navegação dinâmica
-      res.render("inventory/vehicle_detail", {  // Ajuste aqui
+      let nav = await utilities.getNav();
+      res.render("inventory/vehicle_detail", {
         title: `${data.inv_make} ${data.inv_model}`, 
         vehicle: data,
         nav
       });
     } else {
-      next({ status: 404, message: "Veículo não encontrado." });
+      next({ status: 404, message: "Vehicle not found." });
     }
   } catch (error) {
-    console.error("Erro ao buscar veículo: " + error);
-    next({ status: 500, message: "Erro no servidor." });
+    console.error("Eror: " + error);
+    next({ status: 500, message: "Error." });
+  }
+};
+
+/* ***************************
+ *  Render Add Inventory View
+ * ************************** */
+invCont.buildAddInventory = async function (req, res, next) {
+  try {
+    let nav = await utilities.getNav(); 
+    let classificationList = await utilities.buildClassificationList(); 
+    
+    res.render("./inventory/add-inventory", {
+      title: "Add New Vehicle",
+      nav,
+      classificationList,
+      messages: req.flash("info"),
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    next({ status: 500, message: "Error." });
   }
 };
 

@@ -1,0 +1,79 @@
+<%# Add Inventory View %>
+
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else { %>
+    <% res.redirect('/') %>
+<% } %>
+
+<%# Flash Messages %>
+<% if (messages && messages.length > 0) { %>
+    <div class="flash-messages">
+        <% messages.forEach(function(message) { %>
+            <p class="flash-message"><%= message %></p>
+        <% }); %>
+    </div>
+<% } %>
+
+<%# Add Inventory Form %>
+<form id="add-inventory-form" action="/inv/add-inventory" method="POST">
+    <label for="classification_id">Classification:</label>
+    <%- classificationList %>
+    
+    <label for="inv_make">Make:</label>
+    <input type="text" id="inv_make" name="inv_make" required pattern="^[a-zA-Z0-9 ]+$" title="Only letters, numbers, and spaces allowed" value="<%= inv_make || '' %>">
+    
+    <label for="inv_model">Model:</label>
+    <input type="text" id="inv_model" name="inv_model" required pattern="^[a-zA-Z0-9 ]+$" title="Only letters, numbers, and spaces allowed" value="<%= inv_model || '' %>">
+    
+    <label for="inv_year">Year:</label>
+    <input type="number" id="inv_year" name="inv_year" required min="1900" max="2099" value="<%= inv_year || '' %>">
+    
+    <label for="inv_price">Price:</label>
+    <input type="number" id="inv_price" name="inv_price" required step="0.01" min="0" value="<%= inv_price || '' %>">
+    
+    <label for="inv_miles">Miles:</label>
+    <input type="number" id="inv_miles" name="inv_miles" required min="0" value="<%= inv_miles || '' %>">
+    
+    <label for="inv_color">Color:</label>
+    <input type="text" id="inv_color" name="inv_color" required pattern="^[a-zA-Z]+$" title="Only letters allowed" value="<%= inv_color || '' %>">
+    
+    <label for="inv_image">Image Path:</label>
+    <input type="text" id="inv_image" name="inv_image" required value="<%= inv_image || '/path/to/no-image.jpg' %>">
+    
+    <label for="inv_thumbnail">Thumbnail Path:</label>
+    <input type="text" id="inv_thumbnail" name="inv_thumbnail" required value="<%= inv_thumbnail || '/path/to/no-image-thumb.jpg' %>">
+    
+    <button type="submit">Add Vehicle</button>
+</form>
+
+<%# Client-Side Validation %>
+<script>
+    document.getElementById('add-inventory-form').addEventListener('submit', function(event) {
+        const make = document.getElementById('inv_make');
+        const model = document.getElementById('inv_model');
+        const year = document.getElementById('inv_year');
+        const price = document.getElementById('inv_price');
+        const miles = document.getElementById('inv_miles');
+        const color = document.getElementById('inv_color');
+        const regexText = /^[a-zA-Z0-9 ]+$/;
+        const regexColor = /^[a-zA-Z]+$/;
+        
+        if (!regexText.test(make.value) || !regexText.test(model.value)) {
+            event.preventDefault();
+            alert('Make and Model can only contain letters, numbers, and spaces.');
+        }
+        if (year.value < 1900 || year.value > 2099) {
+            event.preventDefault();
+            alert('Year must be between 1900 and 2099.');
+        }
+        if (price.value < 0 || miles.value < 0) {
+            event.preventDefault();
+            alert('Price and Miles must be positive values.');
+        }
+        if (!regexColor.test(color.value)) {
+            event.preventDefault();
+            alert('Color can only contain letters.');
+        }
+    });
+</script>
