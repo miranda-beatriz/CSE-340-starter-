@@ -1,3 +1,9 @@
+const express = require("express")
+const { body, validationResult } = require('express-validator');
+const router = new express.Router() 
+const invController = require("../controllers/invController")
+const errorController = require("../controllers/errorController")
+
 // Rota para exibir a página "New Car Management"
 router.get("/management", invController.renderManagementPage);
 
