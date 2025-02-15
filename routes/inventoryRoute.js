@@ -37,4 +37,23 @@ router.post('/add-inventory', [
     body('inv_thumbnail').notEmpty().withMessage('Thumbnail URL is required')
 ], invController.addInventory);  // Usa a função corretamente
 
+// Rota para adicionar classificação
+router.post("/add-classification", async (req, res) => {
+    try {
+        const { classificationName } = req.body;
+
+        if (!classificationName) {
+            return res.status(400).json({ error: "Classification name is required." });
+        }
+
+        const sql = "INSERT INTO classification (classification_name) VALUES ($1)";
+        await pool.query(sql, [classificationName]);
+
+        res.json({ success: true, message: "Rating added successfully" });
+    } catch (error) {
+        console.error("Error inserting into database :", error);
+        res.status(500).json({ error: "Error entering data into the bank." });
+    }
+});
+
 module.exports = router;
