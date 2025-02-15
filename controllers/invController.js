@@ -1,6 +1,9 @@
+const express = require('express');
+
 const invModel = require("../models/inventory-model.js");
 const utilities = require("../utilities/index");
 const pool = require("../database");
+const router = express.Router();
 
 const invCont = {};
 
@@ -20,7 +23,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
       grid,
     });
   } catch (error) {
-    next({ status: 500, message: "Error to try find vehicle." });
+    next({ status: 500, message: "Erro ao buscar inventário por classificação." });
   }
 };
 
@@ -33,38 +36,108 @@ invCont.getVehicleById = async function (req, res, next) {
     const data = await invModel.getVehicleById(inv_id);
     
     if (data) {
-      let nav = await utilities.getNav();
-      res.render("inventory/vehicle_detail", {
+      let nav = await utilities.getNav(); // Caso esteja usando navegação dinâmica
+      res.render("inventory/vehicle_detail", {  // Ajuste aqui
         title: `${data.inv_make} ${data.inv_model}`, 
         vehicle: data,
         nav
       });
     } else {
-      next({ status: 404, message: "Vehicle not found." });
+      next({ status: 404, message: "Veículo não encontrado." });
     }
   } catch (error) {
-    console.error("Eror: " + error);
-    next({ status: 500, message: "Error." });
+    console.error("Erro ao buscar veículo: " + error);
+    next({ status: 500, message: "Erro no servidor." });
   }
 };
 
 /* ***************************
- *  Render Add Inventory View
+ *  Render Management Page
  * ************************** */
-invCont.buildAddInventory = async function (req, res, next) {
+invCont.renderManagementPage = async function (req, res, next) {
   try {
-    let nav = await utilities.getNav(); 
-    let classificationList = await utilities.buildClassificationList(); 
-    
-    res.render("./inventory/add-inventory", {
-      title: "Add New Vehicle",
-      nav,
-      classificationList,
-      messages: req.flash("info"),
+    const nav = await utilities.getNav(); // Gera a navegação dinâmica
+    res.render("inventory/management", {
+      title: "New Car Management",
+      nav, // Passa a variável nav para o template
+      messages: [], // Evita erro caso mensagens não estejam definidas
+      grid: "" // Evita erro caso grid esteja vazio
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/* ***************************
+ *  Render Add Classification Page
+ * ************************** */
+invCont.renderAddClassificationPage = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+
+    // Verifica se existem mensagens na sessão (caso esteja usando flash messages)
+    const messages = req.flash ? req.flash("messages") : []; // Se `req.flash` existir, usa as mensagens; senão, usa um array vazio.
+
+    res.render("inventory/add-classification", {
+      title: "Add New Classification",
+      nav,
+      messages, // Passa a variável messages para o template
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/* ***************************
+ *  Render Add Inventory Page
+ * ************************** */
+invCont.renderAddInventoryPage = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    const messages = req.flash ? req.flash("messages") : []; 
+    const classificationList = (await invModel.getClassifications()).rows;
+
+    // Passando valores padrão (vazios) para evitar erros na view
+    res.render("inventory/add-inventory", {
+      title: "Add New Inventory Item",
+      nav,
+      messages,
+      classificationList,
+      inv_make: "", // Define um valor padrão vazio
+      inv_model: "",
+      inv_year: "",
+      inv_description: "",
+      inv_image: "",
+      inv_thumbnail: "",
+      inv_price: "",
+      inv_miles: "",
+      inv_color: ""
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Insere os dados no banco
+// Processa o formulário de adição de inventário
+invCont.addInventory = async function (req, res, next) {
+  const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification } = req.body;
+
+  console.log("Valores informados: " , classification);
+
+  try {
+      const result = await pool.query(
+          'INSERT INTO inventory (inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id)  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+          [inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification]
+      );
+
+      console.log('Vehicle added:', result.rows[0]);
+      req.flash('success', 'Vehicle added successfully!');
+      res.redirect('/inventory/list');
   } catch (error) {
-    console.error("Error:", error);
-    next({ status: 500, message: "Error." });
+      console.error('Error adding inventory:', error);
+      req.flash('error', 'Error adding vehicle. Please try again.');
+      res.redirect('/inventory/add-inventory');
   }
 };
 
