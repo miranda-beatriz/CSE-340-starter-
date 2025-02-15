@@ -2,8 +2,6 @@
 
 <% if (title) { %>
     <h1><%= title %></h1>
-<% } else { %>
-    <% res.redirect('/') %>
 <% } %>
 
 <%# Flash Messages %>
@@ -17,63 +15,122 @@
 
 <%# Add Inventory Form %>
 <form id="add-inventory-form" action="/inv/add-inventory" method="POST">
-    <label for="classification_id">Classification:</label>
-    <%- classificationList %>
-    
+    <label for="classification">Classification:</label>
+    <select id="classification" name="classification">
+        <option value="">-- Selecione --</option>
+        <% classificationList.forEach(classification => { %>
+            <option value="<%= classification.classification_id %>">
+                <%= classification.classification_name %>
+            </option>
+        <% }) %>
+    </select>
+
     <label for="inv_make">Make:</label>
-    <input type="text" id="inv_make" name="inv_make" required pattern="^[a-zA-Z0-9 ]+$" title="Only letters, numbers, and spaces allowed" value="<%= inv_make || '' %>">
+    <input type="text" id="inv_make" name="inv_make" required pattern="^[a-zA-Z0-9 ]+$"
+        title="Only letters, numbers, and spaces allowed" value="<%= inv_make || '' %>">
     
     <label for="inv_model">Model:</label>
-    <input type="text" id="inv_model" name="inv_model" required pattern="^[a-zA-Z0-9 ]+$" title="Only letters, numbers, and spaces allowed" value="<%= inv_model || '' %>">
+    <input type="text" id="inv_model" name="inv_model" required pattern="^[a-zA-Z0-9 ]+$"
+        title="Only letters, numbers, and spaces allowed" value="<%= inv_model || '' %>">
     
     <label for="inv_year">Year:</label>
-    <input type="number" id="inv_year" name="inv_year" required min="1900" max="2099" value="<%= inv_year || '' %>">
+    <input type="number" id="inv_year" name="inv_year" required min="1900" max="2099"
+        value="<%= inv_year || '' %>">
     
+    <label for="inv_description">Description:</label>
+    <input type="text" id="inv_description" name="inv_description" required value="<%= inv_description || '' %>">
+
+
     <label for="inv_price">Price:</label>
-    <input type="number" id="inv_price" name="inv_price" required step="0.01" min="0" value="<%= inv_price || '' %>">
+    <input type="number" id="inv_price" name="inv_price" required step="0.01" min="0"
+        value="<%= inv_price || '' %>">
     
     <label for="inv_miles">Miles:</label>
-    <input type="number" id="inv_miles" name="inv_miles" required min="0" value="<%= inv_miles || '' %>">
+    <input type="number" id="inv_miles" name="inv_miles" required min="0"
+        value="<%= inv_miles || '' %>">
     
     <label for="inv_color">Color:</label>
-    <input type="text" id="inv_color" name="inv_color" required pattern="^[a-zA-Z]+$" title="Only letters allowed" value="<%= inv_color || '' %>">
+    <input type="text" id="inv_color" name="inv_color" required pattern="^[a-zA-Z]+$"
+        title="Only letters allowed" value="<%= inv_color || '' %>">
     
     <label for="inv_image">Image Path:</label>
-    <input type="text" id="inv_image" name="inv_image" required value="<%= inv_image || '/path/to/no-image.jpg' %>">
+    <input type="text" id="inv_image" name="inv_image" required
+        value="<%= inv_image || '/path/to/no-image.jpg' %>">
     
     <label for="inv_thumbnail">Thumbnail Path:</label>
-    <input type="text" id="inv_thumbnail" name="inv_thumbnail" required value="<%= inv_thumbnail || '/path/to/no-image-thumb.jpg' %>">
+    <input type="text" id="inv_thumbnail" name="inv_thumbnail" required
+        value="<%= inv_thumbnail || '/path/to/no-image-thumb.jpg' %>">
     
     <button type="submit">Add Vehicle</button>
 </form>
 
-<%# Client-Side Validation %>
+<div id="form-values" style="display:none; border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+    <h3>Valores informados:</h3>
+    <p><strong>Classification:</strong> <span id="display_classification"></span></p>
+    <p><strong>Make:</strong> <span id="display_make"></span></p>
+    <p><strong>Model:</strong> <span id="display_model"></span></p>
+    <p><strong>Year:</strong> <span id="display_year"></span></p>
+    <p><strong>Price:</strong> <span id="display_price"></span></p>
+    <p><strong>Description:</strong> <span id="display_description"></span></p>
+    <p><strong>Miles:</strong> <span id="display_miles"></span></p>
+    <p><strong>Color:</strong> <span id="display_color"></span></p>
+    <p><strong>Image Path:</strong> <span id="display_image"></span></p>
+    <p><strong>Thumbnail Path:</strong> <span id="display_thumbnail"></span></p>
+    <button id="confirm-submit">Confirmar e Enviar</button>
+</div>
+
 <script>
     document.getElementById('add-inventory-form').addEventListener('submit', function(event) {
-        const make = document.getElementById('inv_make');
-        const model = document.getElementById('inv_model');
-        const year = document.getElementById('inv_year');
-        const price = document.getElementById('inv_price');
-        const miles = document.getElementById('inv_miles');
-        const color = document.getElementById('inv_color');
-        const regexText = /^[a-zA-Z0-9 ]+$/;
-        const regexColor = /^[a-zA-Z]+$/;
+        event.preventDefault(); // Evita o envio imediato do formulário
         
-        if (!regexText.test(make.value) || !regexText.test(model.value)) {
-            event.preventDefault();
-            alert('Make and Model can only contain letters, numbers, and spaces.');
-        }
-        if (year.value < 1900 || year.value > 2099) {
-            event.preventDefault();
-            alert('Year must be between 1900 and 2099.');
-        }
-        if (price.value < 0 || miles.value < 0) {
-            event.preventDefault();
-            alert('Price and Miles must be positive values.');
-        }
-        if (!regexColor.test(color.value)) {
-            event.preventDefault();
-            alert('Color can only contain letters.');
-        }
+        // Captura os valores do formulário
+        const classification = document.getElementById('classification');
+        const classificationId = classification.value;
+        const classificationName = classification.options[classification.selectedIndex].text;
+        const make = document.getElementById('inv_make').value;
+        const model = document.getElementById('inv_model').value;
+        const year = document.getElementById('inv_year').value;
+        const price = document.getElementById('inv_price').value;
+        const description = document.getElementById('inv_description').value;
+        const miles = document.getElementById('inv_miles').value;
+        const color = document.getElementById('inv_color').value;
+        const image = document.getElementById('inv_image').value;
+        const thumbnail = document.getElementById('inv_thumbnail').value;
+
+        // Exibe os valores na tela
+        document.getElementById('display_classification').textContent = classificationId ;
+        document.getElementById('display_make').textContent = make;
+        document.getElementById('display_model').textContent = model;
+        document.getElementById('display_year').textContent = year;
+        document.getElementById('display_price').textContent = price;
+        document.getElementById('display_description').textContent = description;
+        document.getElementById('display_miles').textContent = miles;
+        document.getElementById('display_color').textContent = color;
+        document.getElementById('display_image').textContent = image;
+        document.getElementById('display_thumbnail').textContent = thumbnail;
+
+        // Mostra o resumo dos dados
+        document.getElementById('form-values').style.display = 'block';
     });
+
+    // Enviar o formulário após confirmação
+    document.getElementById('confirm-submit').addEventListener('click', function () {
+    const formData = new FormData(document.getElementById('add-inventory-form'));
+
+    fetch('/inv/add-inventory', {
+        method: 'POST',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message); // Exibe mensagem de sucesso ou erro
+        if (data.id) {
+            window.location.href = '/inventory/list'; // Redireciona após sucesso
+        }
+    })
+    .catch(error => console.error('Erro ao enviar:', error));
+});
 </script>
