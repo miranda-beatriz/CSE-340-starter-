@@ -3,7 +3,7 @@
 <% if (title) { %>
     <h1><%= title %></h1>
 <% } else { %>
-    <% res.redirect('/') %>
+    <script>window.location.href = "/";</script>
 <% } %>
 
 <%# Flash Messages %>
@@ -24,12 +24,39 @@
 
 <%# Client-Side Validation %>
 <script>
-    document.getElementById('add-classification-form').addEventListener('submit', function(event) {
+    document.getElementById('add-classification-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita o recarregamento da página
+
         const input = document.getElementById('classification-name');
+        const classificationName = input.value.trim();
         const regex = /^[a-zA-Z0-9]+$/;
-        if (!regex.test(input.value)) {
-            event.preventDefault();
-            alert('Classification name cannot contain spaces or special characters.');
+
+        if (!regex.test(classificationName)) {
+            alert('The classification name cannot contain spaces or special characters..');
+            return;
+        }
+
+        try {
+            const response = await fetch("/inv/add-classification", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ classificationName })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Rating added successfully!");
+                input.value = ""; // Limpa o campo
+            } else {
+                alert("Erro: " + result.error);
+            }
+        } catch (error) {
+            console.error("Error sending rating:", error);
+            alert("An error has occurred. Please try again..");
         }
     });
 </script>
+
