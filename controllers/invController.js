@@ -56,12 +56,15 @@ invCont.getVehicleById = async function (req, res, next) {
  * ************************** */
 invCont.renderManagementPage = async function (req, res, next) {
   try {
-    const nav = await utilities.getNav(); // Gera a navegação dinâmica
+    const nav = await utilities.getNav(); 
+    const classificationSelect = await utilities.buildClassificationList();
+
     res.render("inventory/management", {
+  
       title: "New Car Management",
-      nav, // Passa a variável nav para o template
-      messages: [], // Evita erro caso mensagens não estejam definidas
-      grid: "" // Evita erro caso grid esteja vazio
+      nav, 
+      messages: [], 
+      grid: "" 
     });
   } catch (err) {
     next(err);
@@ -75,13 +78,12 @@ invCont.renderAddClassificationPage = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
 
-    // Verifica se existem mensagens na sessão (caso esteja usando flash messages)
-    const messages = req.flash ? req.flash("messages") : []; // Se `req.flash` existir, usa as mensagens; senão, usa um array vazio.
+    const messages = req.flash ? req.flash("messages") : []; 
 
     res.render("inventory/add-classification", {
       title: "Add New Classification",
       nav,
-      messages, // Passa a variável messages para o template
+      messages, 
     });
   } catch (err) {
     next(err);
@@ -118,8 +120,6 @@ invCont.renderAddInventoryPage = async function (req, res, next) {
   }
 };
 
-// Insere os dados no banco
-// Processa o formulário de adição de inventário
 invCont.addInventory = async function (req, res, next) {
   const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification } = req.body;
 
@@ -140,5 +140,60 @@ invCont.addInventory = async function (req, res, next) {
       res.redirect('/inventory/add-inventory');
   }
 };
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+invCont.getInventoryJSON = async (req, res, next) => {
+  const classification_id = parseInt(req.params.classification_id)
+  const invData = await invModel.getInventoryByClassificationId(classification_id)
+  if (invData[0].inv_id) {
+    return res.json(invData)
+  } else {
+    next(new Error("No data returned"))
+  }
+}
 
+const renderEditInventoryPage = async (req, res) => {
+  try {
+      const inventoryId = req.params.inventory_id;
+      const vehicle = await getVehicleById(inventoryId);
+
+      if (!vehicle) {
+          return res.status(404).render("error", { message: "Vehicle not found." });
+      }
+
+      res.render("editInventory", { vehicle });
+  } catch (error) {
+      console.error("Error loading edit page:", error);
+      res.status(500).render("error", { message: "Internal server error." });
+  }
+};
+
+/* ***************************
+ *  Build edit inventory view
+ * ************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id)
+  let nav = await utilities.getNav()
+  const itemData = await invModel.getInventoryById(inv_id)
+  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  res.render("./inventory/edit-inventory", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id: itemData.inv_id,
+    inv_make: itemData.inv_make,
+    inv_model: itemData.inv_model,
+    inv_year: itemData.inv_year,
+    inv_description: itemData.inv_description,
+    inv_image: itemData.inv_image,
+    inv_thumbnail: itemData.inv_thumbnail,
+    inv_price: itemData.inv_price,
+    inv_miles: itemData.inv_miles,
+    inv_color: itemData.inv_color,
+    classification_id: itemData.classification_id
+  })
+}
 module.exports = invCont;

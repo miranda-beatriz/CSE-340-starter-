@@ -76,14 +76,30 @@
     <p><strong>Color:</strong> <span id="display_color"></span></p>
     <p><strong>Image Path:</strong> <span id="display_image"></span></p>
     <p><strong>Thumbnail Path:</strong> <span id="display_thumbnail"></span></p>
-    <button id="confirm-submit">Confirmar e Enviar</button>
+    <button id="confirm-submit">Send</button>
 </div>
+
+<h2>Manage Inventory</h2>
+<p>Select a classification from the list to see the items belonging to the classification.</p>
+
+<select id="classificationList">
+    <option value="">-- Select Classification --</option>
+    <% classificationList.forEach(classification => { %>
+        <option value="<%= classification.classification_id %>">
+            <%= classification.classification_name %>
+        </option>
+    <% }) %>
+</select>
+
+<table id="inventoryDisplay"></table>
+<noscript>JavaScript must be enabled to use this page.</noscript>
+
 
 <script>
     document.getElementById('add-inventory-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Evita o envio imediato do formulário
+        event.preventDefault(); 
         
-        // Captura os valores do formulário
+
         const classification = document.getElementById('classification');
         const classificationId = classification.value;
         const classificationName = classification.options[classification.selectedIndex].text;
@@ -97,7 +113,7 @@
         const image = document.getElementById('inv_image').value;
         const thumbnail = document.getElementById('inv_thumbnail').value;
 
-        // Exibe os valores na tela
+
         document.getElementById('display_classification').textContent = classificationId ;
         document.getElementById('display_make').textContent = make;
         document.getElementById('display_model').textContent = model;
@@ -133,4 +149,36 @@
     })
     .catch(error => console.error('Erro ao enviar:', error));
 });
+
+document.getElementById('classificationList').addEventListener('change', function () {
+        const classificationId = this.value;
+        if (!classificationId) return;
+        
+        fetch(`/inv/get-inventory/${classificationId}`)
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('inventoryDisplay');
+                table.innerHTML = '';
+                
+                if (data.length === 0) {
+                    table.innerHTML = '<tr><td>No inventory available.</td></tr>';
+                    return;
+                }
+                
+                let headerRow = '<tr><th>Make</th><th>Model</th><th>Year</th><th>Price</th></tr>';
+                table.innerHTML += headerRow;
+                
+                data.forEach(item => {
+                    let row = `<tr>
+                        <td>${item.inv_make}</td>
+                        <td>${item.inv_model}</td>
+                        <td>${item.inv_year}</td>
+                        <td>${item.inv_price}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error loading inventory:', error));
+    });
+    
 </script>
