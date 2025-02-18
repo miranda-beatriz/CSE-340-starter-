@@ -26,7 +26,29 @@
 
 <br>
 
-<%# Inventory Items Display %>
-<%- grid %>
+<h2>Manage Inventory</h2>
 
-<script src="../../js/inventory.js"></script>
+<br>
+
+<p>Choose a classification to see those inventory items.</p>
+
+<br>
+
+<select name="classification" id="classification">
+    <option value="">-- Select Classification --</option>
+    <% classificationSelect.forEach(function(classification) { %>
+        <option value="<%= classification.classification_id %>">
+            <%= classification.classification_name %>
+        </option>
+    <% }); %>
+</select>
+
+<br>
+
+<table id="inventoryDisplay"></table>
+
+<noscript>JavaScript must ve enabled to use this page.</noscript>
+
+<script src="/js/inventory.js"> </script>
+
+
