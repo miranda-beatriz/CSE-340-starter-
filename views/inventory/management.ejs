@@ -3,11 +3,11 @@
 <% if (title) { %>
     <h1><%= title %></h1>
 <% } else { %>
-    <% res.redirect('/') %>
+    <script>window.location.href = "/";</script>
 <% } %>
 
 <%# Flash Messages %>
-<% if (messages && messages.length > 0) { %>
+<% if (Array.isArray(messages) && messages.length > 0) { %>
     <div class="flash-messages">
         <% messages.forEach(function(message) { %>
             <p class="flash-message"><%= message %></p>
@@ -17,9 +17,14 @@
 
 <%# Links to Management Options %>
 <div class="management-links">
+    <br>
+    <br>
     <a href="/inv/add-classification">Add New Classification</a>
+    <br>
     <a href="/inv/add-inventory">Add New Inventory Item</a>
 </div>
+
+<br>
 
 <%# Inventory Items Display %>
 <%- grid %>
