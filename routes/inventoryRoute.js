@@ -1,35 +1,34 @@
+
+// Needed Resources 
 const express = require("express");
+const utilities = require("../utilities/index");
+const pool = require("../database");
 const { body, validationResult } = require('express-validator');
-const router = new express.Router();
+const router = new express.Router() ;
 const invController = require("../controllers/invController");
 const errorController = require("../controllers/errorController");
-const utilities = require("../utilities/utilities");
 
-// Route to display the "New Car Management" page
+// Rota para exibir a página "New Car Management"
 router.get("/management", invController.renderManagementPage);
 
 // Route to build inventory by classification view
 router.get("/type/:classificationId", invController.buildByClassificationId);
 
-// Route to display vehicle details
+// Rota para exibir os detalhes do veículo
 router.get("/detail/:inv_id", invController.getVehicleById);
 
-// Route to intentionally generate a 500 error
+// Rota para gerar um erro 500 intencional
 router.get("/force-error", errorController.generateError);
 
-// Route to display the "Add Classification" page
+// Rota para exibir a página de adicionar nova classificação
 router.get("/add-classification", invController.renderAddClassificationPage);
 
-// Route to display the "Add Inventory" page
+// Rota para exibir a página de adicionar novo item de inventário
 router.get("/add-inventory", invController.renderAddInventoryPage);
 
-// Route to get inventory by classification
-router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON));
+// Rota POST para processar a inserção no banco
+// router.post("/add-inventory", invController.addInventory);
 
-// Route to display the inventory edit page
-router.get("/edit/:inventory_id", utilities.handleErrors(invController.renderEditInventoryPage));
-
-// Route to add new inventory
 router.post('/add-inventory', [
     body('classification_id').notEmpty().withMessage('Classification is required'),
     body('inv_make').notEmpty().withMessage('Make is required'),
@@ -40,9 +39,9 @@ router.post('/add-inventory', [
     body('inv_color').notEmpty().withMessage('Color is required'),
     body('inv_image').notEmpty().withMessage('Image URL is required'),
     body('inv_thumbnail').notEmpty().withMessage('Thumbnail URL is required')
-], invController.addInventory);
+], invController.addInventory);  // Usa a função corretamente
 
-// Route to add classification
+// Rota para adicionar classificação
 router.post("/add-classification", async (req, res) => {
     try {
         const { classificationName } = req.body;
@@ -54,11 +53,16 @@ router.post("/add-classification", async (req, res) => {
         const sql = "INSERT INTO classification (classification_name) VALUES ($1)";
         await pool.query(sql, [classificationName]);
 
-        res.json({ success: true, message: "Classification added successfully" });
+        res.json({ success: true, message: "Rating added successfully" });
     } catch (error) {
-        console.error("Error inserting into database:", error);
-        res.status(500).json({ error: "Error entering data into the database." });
+        console.error("Error inserting into database :", error);
+        res.status(500).json({ error: "Error entering data into the bank." });
     }
 });
+
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
+
+router.get("/edit-inventory/:inv_id", invController.editInventoryView);
+
 
 module.exports = router;
