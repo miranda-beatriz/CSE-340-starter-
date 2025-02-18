@@ -1,7 +1,7 @@
-// /* **************
-//  * This server.js file is the primary file of the 
-//  * application. It is used to control the project.
-//  ***************/
+/* **************
+ * This server.js file is the primary file of the 
+ * application. It is used to control the project.
+ ***************/
 
 /* *********
  * Require Statements
@@ -19,18 +19,11 @@ const session = require("express-session");
 const pool = require('./database/');
 const accountRoute = require('./routes/accountRoute');
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-
-
 
 /* *********
  * Middleware for Static Files
  *********/
 app.use(express.static("public")); // Serve static files from the 'public' directory
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 
 /* ***********************
  * Middleware
@@ -52,10 +45,6 @@ app.use(function(req, res, next){
   res.locals.messages = require('express-messages')(req, res)
   next()
 })
-app.use(cookieParser());
-
-app.use(utilities.checkJWTToken)
-
 
 /* *********
  * View Engine and Templates
@@ -68,11 +57,14 @@ app.set("layout", "./layouts/layout"); // Not at views root
 /* *********
  * Routes
  *********/
+// Use express.urlencoded() to parse URL-encoded form data
+app.use(express.urlencoded({ extended: true })); // Para formularios do tipo application/x-www-form-urlencoded
+app.use(bodyParser.json()); // Para JSON, caso esteja enviando como JSON
+
 app.use(staticRoutes);
 
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
-
 
 // Inventory routes
 app.use("/inv", inventoryRoute);
@@ -83,10 +75,8 @@ app.use("/account", require("./routes/accountRoute"));
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
-  next({status: 404, message: 'Sorry, we appear to have lost that page.'})
+  next({status: 404, message: 'Sorry and Sorry, we appear to have lost that page.'})
 })
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 /* ***********************
 * Express Error Handler
@@ -101,7 +91,7 @@ app.use(async (err, req, res, next) => {
   if (status === 404) {
     message = err.message || "Page not found.";
   } else {
-    message = "Oh no! There was a crash. Maybe try a different route?";
+    message = err.message || "Oh no! There was a crash. Maybe try a different route?";
   }
 
   res.status(status).render("errors/error", {
