@@ -1,0 +1,92 @@
+<%# Update Inventory View %>
+
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } %>
+
+<%# Flash Messages %>
+<% if (Array.isArray(messages) && messages.length > 0) { %>
+    <div class="flash-messages">
+        <% messages.forEach(function(message) { %>
+            <p class="flash-message"><%= message %></p>
+        <% }); %>
+    </div>
+<% } %>
+
+<%# Update Inventory Form %>
+<form id="update-inventory-form" action="/inv/edit-inventory/<%= inv_id %>" method="POST">
+    <input type="hidden" id="inv_id" name="inv_id" value="<%= inv_id %>">
+
+    <label for="classification">Classification:</label>
+    <select id="classification" name="classification">
+        <option value="">-- Selecione --</option>
+        <% classificationSelect.forEach(classification => { %>
+            <option value="<%= classification.classification_id %>"
+                <%= classification.classification_id == classification_id ? 'selected' : '' %>>
+                <%= classification.classification_name %>
+            </option>
+        <% }) %>
+    </select>
+
+    <label for="inv_make">Make:</label>
+    <input type="text" id="inv_make" name="inv_make" required pattern="^[a-zA-Z0-9 ]+$"
+        title="Only letters, numbers, and spaces allowed" value="<%= inv_make || '' %>">
+    
+    <label for="inv_model">Model:</label>
+    <input type="text" id="inv_model" name="inv_model" required pattern="^[a-zA-Z0-9 ]+$"
+        title="Only letters, numbers, and spaces allowed" value="<%= inv_model || '' %>">
+    
+    <label for="inv_year">Year:</label>
+    <input type="number" id="inv_year" name="inv_year" required min="1900" max="2099"
+        value="<%= inv_year || '' %>">
+    
+    <label for="inv_description">Description:</label>
+    <input type="text" id="inv_description" name="inv_description" required value="<%= inv_description || '' %>">
+
+    <label for="inv_price">Price:</label>
+    <input type="number" id="inv_price" name="inv_price" required step="0.01" min="0"
+        value="<%= inv_price || '' %>">
+    
+    <label for="inv_miles">Miles:</label>
+    <input type="number" id="inv_miles" name="inv_miles" required min="0"
+        value="<%= inv_miles || '' %>">
+    
+    <label for="inv_color">Color:</label>
+    <input type="text" id="inv_color" name="inv_color" required pattern="^[a-zA-Z]+$"
+        title="Only letters allowed" value="<%= inv_color || '' %>">
+    
+    <label for="inv_image">Image Path:</label>
+    <input type="text" id="inv_image" name="inv_image" required
+        value="<%= inv_image || '/path/to/no-image.jpg' %>">
+    
+    <label for="inv_thumbnail">Thumbnail Path:</label>
+    <input type="text" id="inv_thumbnail" name="inv_thumbnail" required
+        value="<%= inv_thumbnail || '/path/to/no-image-thumb.jpg' %>">
+    
+    <button type="submit">Update Vehicle</button>
+</form>
+
+<script>
+    document.getElementById('update-inventory-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita o envio imediato do formulário
+
+        const formData = new FormData(this);
+        const inv_id = document.getElementById('inv_id').value;
+
+        fetch(`/inv/edit-inventory/${inv_id}`, {
+            method: 'POST', // Mudado para POST, pois a rota no backend é POST
+            body: new URLSearchParams(formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                window.location.href = '/inventory/list';
+            }
+        })
+        .catch(error => console.error('Erro ao enviar:', error));
+    });
+</script>
